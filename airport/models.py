@@ -92,6 +92,10 @@ class Ticket(models.Model):
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ("flight", "row", "seat")
+        ordering = ["row", "seat"]
+
     @staticmethod
     def validate_ticket(row, seat, airplane, error_to_raise):
         for ticket_attr_value, ticket_attr_name, airplane_attr_name in [
