@@ -51,3 +51,23 @@ class Airport(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.closest_big_city})"
+
+
+class Route(models.Model):
+    source = models.ForeignKey(Airport, on_delete=models.CASCADE)
+    destination = models.ForeignKey(Airport, on_delete=models.CASCADE)
+    distance = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.source} - {self.destination}"
+
+
+class Flight(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.CASCADE)
+    airplane = models.ForeignKey(Airplane, on_delete=models.CASCADE)
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+    crew = models.ManyToManyField(Crew)
+
+    def __str__(self):
+        return self.route
