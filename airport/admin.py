@@ -1,3 +1,9 @@
 from django.contrib import admin
+from airport.models import (
+    AirplaneType,
+    Airplane
+)
 
-# Register your models here.
+
+admin.site.register(AirplaneType)
+admin.site.register(Airplane)
