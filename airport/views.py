@@ -1,7 +1,7 @@
 from rest_framework import viewsets, mixins
-from airport.models import AirplaneType, Airplane
+from airport.models import AirplaneType, Airplane, Crew, Country
 from airport.serializers import AirplaneTypeSerializer, AirplaneSerializer, AirplaneListSerializer, \
-    AirplaneDetailSerializer
+    AirplaneDetailSerializer, CrewSerializer, CountrySerializer
 
 
 class AirplaneTypeViewSet(
@@ -46,3 +46,21 @@ class AirplaneViewSet(
             return AirplaneDetailSerializer
 
         return AirplaneSerializer
+
+
+class CrewViewSet(
+    viewsets.GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin
+):
+    queryset = Crew.objects.all()
+    serializer_class = CrewSerializer
+
+
+class CountryViewSet(
+    viewsets.GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin
+):
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
