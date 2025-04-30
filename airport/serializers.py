@@ -6,6 +6,7 @@ from airport.models import (
     Crew,
     Country,
     City,
+    Flight,
     Route
 )
 
@@ -95,3 +96,19 @@ class RouteListSerializer(RouteSerializer):
 class RouteDetailSerializer(RouteSerializer):
     source = AirportListSerializer(many=False, read_only=True)
     destination = AirportListSerializer(many=False, read_only=True)
+
+
+class FlightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Flight
+        fields = "__all__"
+
+
+class FlightListSerializer(FlightSerializer):
+    route = serializers.StringRelatedField(many=False, read_only=True)
+    airplane = serializers.StringRelatedField(many=False, read_only=True)
+    crew = serializers.StringRelatedField(many=True, read_only=True)
+
+
+class FlightDetailSerializer(FlightListSerializer):
+    route = RouteListSerializer(many=False, read_only=True)
