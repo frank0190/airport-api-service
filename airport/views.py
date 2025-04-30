@@ -30,6 +30,7 @@ from airport.serializers import (
     FlightListSerializer,
     FlightDetailSerializer,
     OrderSerializer,
+    OrderListSerializer,
     RouteSerializer,
     RouteListSerializer,
     RouteDetailSerializer
@@ -270,6 +271,8 @@ class OrderViewSet(
         return Order.objects.filter(user=self.request.user)
 
     def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
         return OrderSerializer
 
     def perform_create(self, serializer):
