@@ -1,5 +1,13 @@
 from rest_framework import serializers
-from airport.models import AirplaneType, Airplane, Crew, Country, City, Airport
+from airport.models import (
+    AirplaneType,
+    Airplane,
+    Airport,
+    Crew,
+    Country,
+    City,
+    Route
+)
 
 
 class AirplaneTypeSerializer(serializers.ModelSerializer):
@@ -67,3 +75,23 @@ class AirportListSerializer(AirportSerializer):
 
 class AirportDetailSerializer(AirportSerializer):
     closest_big_city = CityListSerializer(many=False, read_only=True)
+
+
+class RouteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Route
+        fields = "__all__"
+
+
+class RouteListSerializer(RouteSerializer):
+    source = serializers.StringRelatedField(
+        many=False, source="source.closest_big_city"
+    )
+    destination = serializers.StringRelatedField(
+        many=False, source="destination.closest_big_city"
+    )
+
+
+class RouteDetailSerializer(RouteSerializer):
+    source = AirportListSerializer(many=False, read_only=True)
+    destination = AirportListSerializer(many=False, read_only=True)
