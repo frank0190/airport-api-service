@@ -5,7 +5,10 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from airport.models import Airplane, AirplaneType
-from airport.serializers import AirplaneListSerializer, AirplaneDetailSerializer
+from airport.serializers import (
+    AirplaneListSerializer,
+    AirplaneDetailSerializer
+)
 from airport.tests.sample_data import sample_airplane
 
 AIRPLANE_URL = reverse("airport:airplane-list")
@@ -98,3 +101,28 @@ class AuthenticatedAirplaneApiTests(TestCase):
         res = self.client.post(AIRPLANE_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminAirplaneApiTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            "admin@admin.com", "testpass", is_staff=True
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_create_airplane(self):
+        airplane_type = AirplaneType.objects.create(
+            name="Boeing 747"
+        )
+
+        payload = {
+            "name": "Forbidden Airplane",
+            "rows": 20,
+            "seats_in_row": 4,
+            "airplane_type": airplane_type.pk
+        }
+
+        res = self.client.post(AIRPLANE_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
