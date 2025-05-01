@@ -90,37 +90,51 @@ class AuthenticatedFlightApiTests(TestCase):
         self.assertIn(serializer2.data, res.data)
         self.assertNotIn(serializer3.data, res.data)
 
-        def test_filter_flights_by_crews(self):
-            crew1 = Crew.objects.create(
-                first_name="First",
-                last_name="Crew"
-            )
-            crew2 = Crew.objects.create(
-                first_name="Second",
-                last_name="Crew"
-            )
-            crew3 = Crew.objects.create(
-                first_name="Third",
-                last_name="Crew"
-            )
+    def test_filter_flights_by_crews(self):
+        crew1 = Crew.objects.create(
+            first_name="First",
+            last_name="Crew"
+        )
+        crew2 = Crew.objects.create(
+            first_name="Second",
+            last_name="Crew"
+        )
+        crew3 = Crew.objects.create(
+            first_name="Third",
+            last_name="Crew"
+        )
 
-            flight1 = sample_flight()
-            flight2 = sample_flight()
-            flight3 = sample_flight()
+        flight1 = sample_flight()
+        flight2 = sample_flight()
+        flight3 = sample_flight()
 
-            flight1.crew.add(crew1)
-            flight2.crew.add(crew2)
-            flight3.crew.add(crew3)
+        flight1.crew.add(crew1)
+        flight2.crew.add(crew2)
+        flight3.crew.add(crew3)
 
-            res = self.client.get(
-                FLIGHT_URL, {"crews": f"{crew1.id}, {crew2.id}"}
-            )
+        res = self.client.get(
+            FLIGHT_URL, {"crews": f"{crew1.id}, {crew2.id}"}
+        )
 
-            serializer1 = FlightListSerializer(flight1)
-            serializer2 = FlightListSerializer(flight2)
-            serializer3 = FlightListSerializer(flight3)
+        serializer1 = FlightListSerializer(flight1)
+        serializer2 = FlightListSerializer(flight2)
+        serializer3 = FlightListSerializer(flight3)
 
-            self.assertIn(serializer1.data, res.data)
-            self.assertIn(serializer2.data, res.data)
-            self.assertNotIn(serializer3.data, res.data)
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
 
+    def test_create_flight_forbidden(self):
+        route = sample_route()
+        airplane = sample_airplane()
+
+        payload = {
+            "route": route.pk,
+            "airplane": airplane.pk,
+            "departure_time": "2023-11-18T14:00:00+02:00",
+            "arrival_time": "2023-11-18T19:00:00+02:00",
+        }
+
+        res = self.client.post(FLIGHT_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
