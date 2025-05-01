@@ -8,10 +8,13 @@ from airport.models import Airport
 from airport.serializers import AirportListSerializer, AirportDetailSerializer
 from airport.tests.sample_data import sample_airport, sample_city
 
+
 AIRPORT_URL = reverse("airport:airport-list")
+
 
 def detail_url(airport_id):
     return reverse("airport:airport-detail", args=[airport_id])
+
 
 class UnauthenticatedAirportApiTests(TestCase):
     def setUp(self):
@@ -86,3 +89,28 @@ class AuthenticatedAirportApiTests(TestCase):
         res = self.client.post(AIRPORT_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminAirportApiTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            "admin@admin.com", "testpass", is_staff=True
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_create_airport(self):
+        city = sample_city()
+
+        payload = {
+            "name": "Test Airport",
+            "closest_big_city": city.pk
+        }
+
+        res = self.client.post(AIRPORT_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        airport = Airport.objects.get(id=res.data["id"])
+        self.assertEqual(payload["name"], airport.name)
+        self.assertEqual(city, airport.closest_big_city)
