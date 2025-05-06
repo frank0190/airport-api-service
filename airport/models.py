@@ -101,7 +101,7 @@ class Flight(models.Model):
     crew = models.ManyToManyField(Crew)
 
     def __str__(self):
-        return self.route
+        return str(self.route) + f" on {self.departure_time.strftime('%Y-%m-%d %H:%M')}"
 
 
 class Order(models.Model):
@@ -164,6 +164,7 @@ class Ticket(models.Model):
             force_update=False,
             using=None,
             update_fields=None,
+            **kwargs,
     ):
         self.full_clean()
         return super(Ticket, self).save(
