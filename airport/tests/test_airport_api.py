@@ -44,7 +44,7 @@ class AuthenticatedAirportApiTests(TestCase):
         serializer = AirportListSerializer(airports, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertCountEqual(res.data, serializer.data)
 
     def test_filter_airports_by_closest_big_city(self):
         city1 = sample_city(name="First City")

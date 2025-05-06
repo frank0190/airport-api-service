@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models import F, Count
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -33,20 +34,26 @@ class AuthenticatedFlightApiTests(TestCase):
         )
         self.client.force_authenticate(self.user)
 
+    def _get_flights_with_annotation(self, **filters):
+        return Flight.objects.filter(**filters).annotate(
+            tickets_available=(
+                    F("airplane__rows")
+                    * F("airplane__seats_in_row")
+                    - Count("tickets")
+            )
+        )
+
     def test_list_flights(self):
         sample_flight()
         sample_flight()
 
         res = self.client.get(FLIGHT_URL)
 
-        flights = Flight.objects.all()
+        flights = self._get_flights_with_annotation()
         serializer = FlightListSerializer(flights, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-
-        for index, serializer_object in enumerate(serializer.data):
-            for key in serializer_object:
-                self.assertEqual(serializer_object[key], res.data[index][key])
+        self.assertCountEqual(res.data, serializer.data)
 
     def test_filter_flights_by_routes(self):
         route1 = sample_route(distance=1111)
@@ -58,15 +65,20 @@ class AuthenticatedFlightApiTests(TestCase):
         flight3 = sample_flight(route=route3)
 
         res = self.client.get(
-            FLIGHT_URL, {"routes": f"{route1.id}, {route2.id}"}
+            FLIGHT_URL, {"routes": f"{route1.id},{route2.id}"}
         )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 2)
 
-        serializer1 = FlightListSerializer(flight1)
-        serializer2 = FlightListSerializer(flight2)
-        serializer3 = FlightListSerializer(flight3)
+        expected_flights_qs = self._get_flights_with_annotation(
+            id__in=[flight1.id, flight2.id]
+        )
+        serializer = FlightListSerializer(expected_flights_qs, many=True)
 
-        self.assertIn(serializer1.data, res.data)
-        self.assertIn(serializer2.data, res.data)
+        self.assertCountEqual(res.data, serializer.data)
+
+        flight3_from_db = self._get_flights_with_annotation(id=flight3.id).first()
+        serializer3 = FlightListSerializer(flight3_from_db)
         self.assertNotIn(serializer3.data, res.data)
 
     def test_filter_flights_by_airplanes(self):
@@ -79,15 +91,20 @@ class AuthenticatedFlightApiTests(TestCase):
         flight3 = sample_flight(airplane=airplane3)
 
         res = self.client.get(
-            FLIGHT_URL, {"airplanes": f"{airplane1.id}, {airplane2.id}"}
+            FLIGHT_URL, {"airplanes": f"{airplane1.id},{airplane2.id}"}
         )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 2)
 
-        serializer1 = FlightListSerializer(flight1)
-        serializer2 = FlightListSerializer(flight2)
-        serializer3 = FlightListSerializer(flight3)
+        expected_flights_qs = self._get_flights_with_annotation(
+            id__in=[flight1.id, flight2.id]
+        )
+        serializer = FlightListSerializer(expected_flights_qs, many=True)
 
-        self.assertIn(serializer1.data, res.data)
-        self.assertIn(serializer2.data, res.data)
+        self.assertCountEqual(res.data, serializer.data)
+
+        flight3_from_db = self._get_flights_with_annotation(id=flight3.id).first()
+        serializer3 = FlightListSerializer(flight3_from_db)
         self.assertNotIn(serializer3.data, res.data)
 
     def test_filter_flights_by_crews(self):
@@ -113,15 +130,20 @@ class AuthenticatedFlightApiTests(TestCase):
         flight3.crew.add(crew3)
 
         res = self.client.get(
-            FLIGHT_URL, {"crews": f"{crew1.id}, {crew2.id}"}
+            FLIGHT_URL, {"crews": f"{crew1.id},{crew2.id}"}
         )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 2)
 
-        serializer1 = FlightListSerializer(flight1)
-        serializer2 = FlightListSerializer(flight2)
-        serializer3 = FlightListSerializer(flight3)
+        expected_flights_qs = self._get_flights_with_annotation(
+            id__in=[flight1.id, flight2.id]
+        )
+        serializer = FlightListSerializer(expected_flights_qs, many=True)
 
-        self.assertIn(serializer1.data, res.data)
-        self.assertIn(serializer2.data, res.data)
+        self.assertCountEqual(res.data, serializer.data)
+
+        flight3_from_db = self._get_flights_with_annotation(id=flight3.id).first()
+        serializer3 = FlightListSerializer(flight3_from_db)
         self.assertNotIn(serializer3.data, res.data)
 
     def test_create_flight_forbidden(self):

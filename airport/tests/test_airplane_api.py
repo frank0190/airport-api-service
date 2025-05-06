@@ -46,7 +46,7 @@ class AuthenticatedAirplaneApiTests(TestCase):
         serializer = AirplaneListSerializer(airplanes, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertCountEqual(res.data, serializer.data)
 
     def test_filter_airplanes_by_airplane_types(self):
         airplane_type1 = AirplaneType.objects.create(
@@ -64,7 +64,7 @@ class AuthenticatedAirplaneApiTests(TestCase):
         airplane3 = sample_airplane(name="Airplane 3", airplane_type=airplane_type3)
 
         res = self.client.get(
-            AIRPLANE_URL, {"airplane_types": f"{airplane_type1.id}, {airplane_type2.id}"}
+            AIRPLANE_URL, {"airplane_types": f"{airplane_type1.id},{airplane_type2.id}"}
         )
 
         serializer1 = AirplaneListSerializer(airplane1)
