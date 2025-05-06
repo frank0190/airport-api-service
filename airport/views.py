@@ -39,7 +39,7 @@ from airport.serializers import (
     OrderListSerializer,
     RouteSerializer,
     RouteListSerializer,
-    RouteDetailSerializer, ,
+    RouteDetailSerializer,
 )
 
 
@@ -67,7 +67,7 @@ class AirplaneViewSet(
 
     def get_queryset(self):
         """Retrieve the airplanes with airplane_type filter"""
-        airplane_types = self.request.query_params.get("airplane_type")
+        airplane_types = self.request.query_params.get("airplane_types")
 
         queryset = self.queryset
 
