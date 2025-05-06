@@ -69,7 +69,7 @@ class City(models.Model):
 
 class Airport(models.Model):
     name = models.CharField(max_length=255)
-    closest_big_city = models.ForeignKey(City, on_delete=models.CASCADE)
+    closest_big_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="airports")
     image = models.ImageField(null=True, upload_to=movie_image_file_path)
 
     def __str__(self):
@@ -107,8 +107,9 @@ class Flight(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-         settings.AUTH_USER_MODEL,
-         on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="orders",
      )
 
     def __str__(self):
