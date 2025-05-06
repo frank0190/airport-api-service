@@ -1,10 +1,9 @@
 FROM python:3.11.4-alpine
-
 LABEL maintainer="vadimkaliupa90@gmail.com"
 
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR app/
+WORKDIR /app
 
 COPY requirements.txt requirements.txt
 
@@ -15,14 +14,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN mkdir -p /vol/web/media
+RUN mkdir -p /files/media
 
 RUN adduser  \
     --disabled-password  \
     --no-create-home  \
-    django-user
+    my_user
 
-RUN chown -R django-user:django-user /vol/
-RUN chmod -R 755 /vol/web/
+RUN chown -R my_user /files/media
+RUN chmod -R 755 /files/media
 
-USER django-user
+USER my_user
