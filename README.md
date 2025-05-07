@@ -8,8 +8,8 @@ A web-based application for managing flights, airplanes, routes, crew assignment
 
 * JWT authentication for secure API access.
 * Comprehensive API documentation available at:
-  - /api/schema/swagger-ui/ (Swagger UI)
-  - /api/schema/redoc/ (ReDoc)
+  - /api/doc/swagger/ (Swagger UI)
+  - /api/doc/redoc/ (ReDoc)
 * Manage airplanes, flight schedules, user orders and tickets with flight, row, and seat details.
 * Assign crew members to flights.
 * Track international routes and airports.
