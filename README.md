@@ -1,31 +1,28 @@
 # Airport API Service ✈️🌎📆
 
-**Welcome to the global airport flight tracking system:**
-* The Airport API Service, built with Django, efficiently manages and tracks flights from worldwide airports.
-* This system facilitates effective coordination and information management.
-* The system's structured features allow users to manage various aspects of the aviation ecosystem.
+## Project Description
 
-🏞 Airport API Endpoints:
+A web-based application for managing flights, airplanes, routes, crew assignments and providing users with the ability to book tickets.
 
-Airport API endpoints
+## Features
 
-**Project Features:**
-* Authentication: Users are authenticated with JWTs issued at login for secure access.
-* Admin Panel: Admins can manage data efficiently by adding, editing, and deleting entries.
-* Documentation: API documentation is available via Swagger UI.
-* Airplane Management: Define and categorize different types of airplanes, capturing details like capacity.
-* Crew Management: Manage crew members, including their first and last names.
-* Location Handling: Record country and city information, linking airports to nearby big cities.
-* Airport Details: Store detailed airport data, including names, cities, and images.
-* Route Definition: Define routes between airports to organize flight connections.
-* Flight Tracking: Monitor flights with route, airplane, departure, arrival times, and crew details.
-* Order and Ticket System: Manage user orders and tickets with flight, row, and seat details.
+* JWT authentication for secure API access.
+* Comprehensive API documentation available at:
+  - /api/schema/swagger-ui/ (Swagger UI)
+  - /api/schema/redoc/ (ReDoc)
+* Manage airplanes, flight schedules, user orders and tickets with flight, row, and seat details.
+* Assign crew members to flights.
+* Track international routes and airports.
+* Django admin panel for data management.
+* User interface for browsing available flights and booking tickets easily.
 
-🏞 Swagger Documentation:
+## Technologies Used
 
-Swagger documentation
+Backend: Django Framework  
+Database: PostgreSQL  
+API: Django REST Framework
 
-**Installation and Usage:**
+## Installation and Usage:
 * Install Python 3.9.
 * Install PostgreSQL and create db.
 * Install Docker.
@@ -61,57 +58,16 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-# Run with Docker:
+### Run with Docker:
+```
 docker-compose build
 docker-compose up
+```
+## DB Structure:
 
-🏞 DB Structure:
+![DB structure](шлях_до_зображення "Необов'язковий заголовок зображення")
 
-DB structure
+## Getting Access:
 
-**Stages of Project Creation:**
-* Initialization of the Project:
-  - Set up the initial Django project structure.
-  - Configure project settings such as database connection and Django applications.
-* Environment Setup:
-  - Add the requirements.txt file and environment variables (SECRET_KEY, PostgreSQL settings) in ".env.sample".
-  - Switch to the PostgreSQL database and change TIME_ZONE.
-* App Structure Organization:
-  - Create empty User and Airport apps.
-  - Add these apps to INSTALLED_APPS.
-* Model Creation:
-  - Implement User and UserManager models without the username field.
-  - Create Country, City, Airport, Route, Flight, Order, Ticket, AirplaneType, Airplane and Crew models.
-  - Add verbose names and unique constraints.
-* Migrations and Admin Setup:
-  - Create initial migrations and register models in the admin site.
-  - Implement UserAdmin without the username field.
-* Authentication and Authorization Setup:
-  - Add REST framework and JWTAuthentication.
-  - Configure permission and throttle classes.
-  - Add settings for drf_spectacular.
-* ViewSets and Serializers Creation:
-  - Implement ViewSets and serializers for AirplaneType, Airplane, Airport, Route, Flight, Order and Ticket.
-  - Add filters and configurations for serializers.
-* Testing:
-  - Implement tests for admin and unauthenticated requests.
-  - Create tests for CRUD operations and data filtering.
-* Docker:
-  - Create Dockerfile, .dockerignore and docker-compose.yml.
-* Documentation:
-  - Update README.md with the project description.
-  - Add images and other materials in the images directory.
-  - Update database structure and project description.
-* Additional Changes and Fixes:
-  - Fix and improve save methods in models.
-  - Update .gitignore to include new directories.
-  - Refactor code using "black" and "flake8".
-
-🏞 Admin Page:
-
-Admin page
-
-**Getting Access:**
-
-create a user via: /api/user/register
-get access token via: /api/user/token
+* create a user via: /api/user/register
+* get access token via: /api/user/token
