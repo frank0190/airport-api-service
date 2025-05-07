@@ -65,7 +65,7 @@ docker-compose up
 ```
 ## DB Structure:
 
-![DB structure](шлях_до_зображення "Необов'язковий заголовок зображення")
+![DB structure](images/airport_db_structure.png)
 
 ## Getting Access:
 
